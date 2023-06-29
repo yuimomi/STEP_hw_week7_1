@@ -70,18 +70,25 @@ void my_initialize() {
   my_heap.dummy.next = NULL;
 }
 
+
 // my_malloc() is called every time an object is allocated.
 // |size| is guaranteed to be a multiple of 8 bytes and meets 8 <= |size| <=
 // 4000. You are not allowed to use any library functions other than
 // mmap_from_system() / munmap_to_system().
+
 void *my_malloc(size_t size) {
+  int min = 4096;
   my_metadata_t *metadata = my_heap.free_head;
   my_metadata_t *prev = NULL;
+  
   // First-fit: Find the first free slot the object fits.
   // TODO: Update this logic to Best-fit!
   while (metadata && metadata->size < size) {
-    prev = metadata;
-    metadata = metadata->next;
+    if (min > metadata->size){
+        prev = metadata;
+        metadata = metadata->next;
+        min = metadata->size;
+    }
   }
   // now, metadata points to the first free slot
   // and prev is the previous entry.
